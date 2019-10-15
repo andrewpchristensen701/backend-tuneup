@@ -2,18 +2,28 @@
 # -*- coding: utf-8 -*-
 """Tuneup assignment"""
 
-__author__ = "???"
+__author__ = "andrewpchristensen701"
 
 import cProfile
 import pstats
 import functools
+import timeit
 
 
 def profile(func):
     """A function that can be used as a decorator to measure performance"""
-    # You need to understand how decorators are constructed and used.
-    # Be sure to review the lesson material on decorators, they are used
-    # extensively in Django and Flask.
+
+    @functools.wraps(func)
+    def inside(*args, **kwargs):
+        c = cProfile.Profile()
+        c.enable()
+        result = func(*args, **kwargs)
+        c.disable()
+        sort_by = 'cumulative'
+        cs = pstats.Stats(c).sort_stats(sort_by)
+        cs.print_stats()
+        return result
+    return inside
     raise NotImplementedError("Complete this decorator function")
 
 
@@ -45,7 +55,12 @@ def find_duplicate_movies(src):
 
 def timeit_helper():
     """Part A:  Obtain some profiling measurements using timeit"""
-    # YOUR CODE GOES HERE
+    t = timeit.Timer(stmt='find_duplicate_movies("movies.txt")',
+      setup='from __main__ import find_duplicate_movies')
+    rpc = 3
+    repeats = 7
+    result = t.repeat(repeat=repeats. number=rpc)
+    print(min(result)) / float(rpc)
 
 
 def main():
